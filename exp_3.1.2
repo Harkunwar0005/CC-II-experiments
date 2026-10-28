@@ -1,0 +1,55 @@
+
+import java.util.*;
+
+class Solution {
+    public boolean canCross(int[] stones) {
+        int n = stones.length;
+
+        // The first jump must be 1 unit
+        if (stones[1] != 1) {
+            return false;
+        }
+
+        // Map each stone position to its index
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            map.put(stones[i], i);
+        }
+
+        // dp[i] stores all jump lengths that can reach stone i
+        Set<Integer>[] dp = new HashSet[n];
+
+        for (int i = 0; i < n; i++) {
+            dp[i] = new HashSet<>();
+        }
+
+        // First jump reaches stone at position 1
+        dp[1].add(1);
+
+        for (int i = 1; i < n; i++) {
+            for (int jump : dp[i]) {
+                for (int nextJump = jump - 1;
+                     nextJump <= jump + 1;
+                     nextJump++) {
+
+                    if (nextJump <= 0) {
+                        continue;
+                    }
+
+                    int nextPosition = stones[i] + nextJump;
+
+                    if (map.containsKey(nextPosition)) {
+                        int nextIndex = map.get(nextPosition);
+                        dp[nextIndex].add(nextJump);
+                    }
+                }
+            }
+
+            if (!dp[n - 1].isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
